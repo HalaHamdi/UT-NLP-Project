@@ -5,36 +5,33 @@ from transformers import Trainer, EvalPrediction
 from transformers.trainer_utils import PredictionOutput
 from typing import Tuple
 from tqdm.auto import tqdm
+import os
 
 QA_MAX_ANSWER_LENGTH = 30
 
 
-# This function preprocesses an NLI dataset, tokenizing premises and hypotheses.
-def prepare_dataset_nli(examples, tokenizer, max_seq_length=None):
-    max_seq_length = tokenizer.model_max_length if max_seq_length is None else max_seq_length
+def adjust_output_dir(out_dir: str) -> str:
+    """Normalize and place output directories under a top-level ./Data folder.
 
-    tokenized_examples = tokenizer(
-        examples['premise'],
-        examples['hypothesis'],
-        truncation=True,
-        max_length=max_seq_length,
-        padding='max_length'
-    )
+    Behavior:
+    - If the provided path (after normalization) already starts with 'Data', it is returned unchanged.
+    - If an absolute path is provided, only the basename is used and placed under './Data/'.
+      e.g. '/abs/path/model' -> 'Data/model'
+    - For relative paths, prepend 'Data/'.
 
-    tokenized_examples['label'] = examples['label']
-    return tokenized_examples
-
-
-# This function computes sentence-classification accuracy.
-# Functions with signatures like this one work as the "compute_metrics" argument of transformers.Trainer.
-def compute_accuracy(eval_preds: EvalPrediction):
-    return {
-        'accuracy': (np.argmax(
-            eval_preds.predictions,
-            axis=1) == eval_preds.label_ids).astype(
-            np.float32).mean().item()
-    }
-
+    This mirrors the small helper previously embedded in `eval.py` so both train/eval
+    scripts can share the same logic.
+    """
+    norm = os.path.normpath(out_dir)
+    parts = norm.split(os.sep)
+    # If already starts with Data (relative), keep as-is
+    if parts and parts[0] == 'Data':
+        return norm
+    # If absolute path provided, use only the basename under ./Data
+    if os.path.isabs(out_dir):
+        return os.path.join('Data', os.path.basename(out_dir))
+    # Normal relative path: prepend Data/
+    return os.path.join('Data', out_dir)
 
 # This function preprocesses a question answering dataset, tokenizing the question and context text
 # and finding the right offsets for the answer spans in the tokenized context (to use as labels).
@@ -312,3 +309,4 @@ class QuestionAnsweringTrainer(Trainer):
         self.control = self.callback_handler.on_evaluate(self.args, self.state,
                                                          self.control, metrics)
         return metrics
+    
