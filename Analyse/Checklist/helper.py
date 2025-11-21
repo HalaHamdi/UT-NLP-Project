@@ -107,8 +107,12 @@ def export_suite_to_jsonl(suite, output_file="checklist_testsuite.jsonl"):
                     'test_name': testname,
                     'context': context,
                     'question': question,
-                    'prediction': pred,
-                    'label': label
+                    'answers':{
+                        'text':[label],
+                        'answer_start':[context.find(label)],
+                        'unique': context.count(label) == 1
+                    },
+                    'pred': pred
                 })
 
         
@@ -117,7 +121,7 @@ def export_suite_to_jsonl(suite, output_file="checklist_testsuite.jsonl"):
         for row in all_rows:
             f.write(json.dumps(row) + "\n")
 
-    print(f"✅ Saved", len(all_rows), "rows to {output_file}.")
+    print(f"✅ Saved, {len(all_rows)} rows to {output_file}.")
    
 def get_summary(suite):
     summary_list = []
