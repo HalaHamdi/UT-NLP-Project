@@ -44,3 +44,55 @@ flowchart LR
     |eval_f1 | 28.2| 39.0|
 
 ---
+
+```mermaid
+
+flowchart LR
+  %% invisible node that supplies the arrow
+  start(( )):::invisible -->|SQUAD  + pretrained model| A[Finetuned model V1]
+
+  A -->|Adversarial and Checklist + model v1| B[Finetuned model V2]
+
+  classDef invisible fill:transparent,stroke:transparent;
+
+```
+-
+    - SQUAD eval split
+
+    | Metric | Finetuned V1 | Finetuned V2|
+    |--------|----------|---------|
+    |eval_exact_match |78.2|  65.74|
+    |eval_f1 | 86.0 |  75.22 |
+
+    - Avdersarial eval split
+
+    | Metric | Finetuned V1 | Finetuned V2|
+    |--------|----------|---------|
+    |eval_exact_match | 18.6| 29.86 |
+    |eval_f1 | 28.2| 40.05|
+---
+```mermaid
+
+flowchart LR
+  %% invisible node that supplies the arrow
+  start(( )):::invisible -->|pretrained model| A["Combined (Squad, Adversarial, Checklist) + pretrained"]
+
+  A --> B[Finetuned model]
+
+  classDef invisible fill:transparent,stroke:none;
+
+```
+-
+     - SQUAD eval split
+
+    | Metric | Finetuned V1 | Finetuned V2|
+    |--------|----------|---------|
+    |eval_exact_match |78.2|  78.98|
+    |eval_f1 | 86.0 |  86.41 |
+
+    - Avdersarial eval split
+
+    | Metric | Finetuned V1 | Finetuned V2|
+    |--------|----------|---------|
+    |eval_exact_match | 18.6| 28.4 |
+    |eval_f1 | 28.2| 38.93|
