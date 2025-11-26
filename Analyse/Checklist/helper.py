@@ -148,23 +148,30 @@ def export_suite_to_jsonl(suite, output_file="checklist_testsuite.jsonl"):
     print(f"🔒 Generated {len(used_ids)} unique IDs (collision-free)")
 
 
-def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7):
+def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7, test_ratio=0.2, val_ratio=0.1):
     """
-    Generate train/test splits from a test suite ensuring:
+    Generate train/test/validation splits from a test suite ensuring:
     1. No data leakage (examples only appear in one split)
     2. QA pairs from same testcase stay together
-    3. Equal splits across different test names (70% train for each test)
+    3. Equal splits across different test names (70% train, 20% test, 10% validation for each test)
     4. Proper rounding to maintain constraints
     
     Args:
         suite: CheckList test suite
         output_folder: folder path to save the splits
         train_ratio: ratio for training split (default 0.7)
+        test_ratio: ratio for test split (default 0.2)
+        val_ratio: ratio for validation split (default 0.1)
     """
+    
+    # Ensure ratios sum to 1.0
+    if abs(train_ratio + test_ratio + val_ratio - 1.0) > 0.001:
+        raise ValueError(f"Ratios must sum to 1.0, got {train_ratio + test_ratio + val_ratio}")
     
     # Create output folder if it doesn't exist
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+    
     
     # Step 1: Export suite to temporary combined file using existing function
     temp_combined_file = os.path.join(output_folder, "temp_combined.jsonl")
@@ -190,8 +197,9 @@ def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7):
     # Step 3: Split each test name separately to ensure equal splits
     train_data = []
     test_data = []
+    val_data = []
     
-    print(f"📊 Splitting each test separately with {train_ratio:.1%} train ratio:")
+    print(f"📊 Splitting each test separately with {train_ratio:.1%}/{test_ratio:.1%}/{val_ratio:.1%} train/test/val ratios:")
     
     for test_name, testcases in testcases_by_test.items():
         # Group QA pairs by testcase (keep pairs together)
@@ -207,10 +215,13 @@ def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7):
         # Calculate split for this test
         total_groups = len(testcase_groups)
         train_groups_count = round(total_groups * train_ratio)
+        test_groups_count = round(total_groups * test_ratio)
+        val_groups_count = total_groups - train_groups_count - test_groups_count  # Remaining for validation
         
         # Split the testcase groups for this test
         test_train_groups = testcase_groups[:train_groups_count]
-        test_test_groups = testcase_groups[train_groups_count:]
+        test_test_groups = testcase_groups[train_groups_count:train_groups_count + test_groups_count]
+        test_val_groups = testcase_groups[train_groups_count + test_groups_count:]
         
         # Add to overall splits
         for group in test_train_groups:
@@ -219,17 +230,29 @@ def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7):
         for group in test_test_groups:
             test_data.extend(group)
         
+        for group in test_val_groups:
+            val_data.extend(group)
+        
         # Print per-test statistics
         train_examples = sum(len(group) for group in test_train_groups)
         test_examples = sum(len(group) for group in test_test_groups)
-        total_examples = train_examples + test_examples
-        actual_train_ratio = train_examples / total_examples if total_examples > 0 else 0
+        val_examples = sum(len(group) for group in test_val_groups)
+        total_examples = train_examples + test_examples + val_examples
         
-        print(f"   {test_name}: {len(test_train_groups)}/{total_groups} groups train ({actual_train_ratio:.1%} examples)")
+        if total_examples > 0:
+            actual_train_ratio = train_examples / total_examples
+            actual_test_ratio = test_examples / total_examples
+            actual_val_ratio = val_examples / total_examples
+        else:
+            actual_train_ratio = actual_test_ratio = actual_val_ratio = 0
+        
+        print(f"   {test_name}: {len(test_train_groups)}/{len(test_test_groups)}/{len(test_val_groups)} groups "
+              f"({actual_train_ratio:.1%}/{actual_test_ratio:.1%}/{actual_val_ratio:.1%} examples)")
     
     # Step 4: Save splits to files
     train_file = os.path.join(output_folder, "checklist_train.jsonl")
     test_file = os.path.join(output_folder, "checklist_test.jsonl")
+    val_file = os.path.join(output_folder, "checklist_validation.jsonl")
     
     with open(train_file, "w") as f:
         for row in train_data:
@@ -239,24 +262,36 @@ def generate_dataset(suite, output_folder="ChecklistData", train_ratio=0.7):
         for row in test_data:
             f.write(json.dumps(row) + "\n")
     
+    with open(val_file, "w") as f:
+        for row in val_data:
+            f.write(json.dumps(row) + "\n")
+    
     # Step 5: Delete the temporary combined file
     os.remove(temp_combined_file)
     
     # Step 6: Print overall summary
-    total_examples = len(train_data) + len(test_data)
-    actual_train_ratio = len(train_data) / total_examples if total_examples > 0 else 0
+    total_examples = len(train_data) + len(test_data) + len(val_data)
+    if total_examples > 0:
+        actual_train_ratio = len(train_data) / total_examples
+        actual_test_ratio = len(test_data) / total_examples
+        actual_val_ratio = len(val_data) / total_examples
+    else:
+        actual_train_ratio = actual_test_ratio = actual_val_ratio = 0
+    
     total_tests = len(testcases_by_test)
     
     print(f"\n📋 Overall Dataset Split Summary:")
     print(f"   Total test names: {total_tests}")
     print(f"   Total examples: {total_examples}")
     print(f"   Train examples: {len(train_data)} ({actual_train_ratio:.1%})")
-    print(f"   Test examples: {len(test_data)} ({1-actual_train_ratio:.1%})")
+    print(f"   Test examples: {len(test_data)} ({actual_test_ratio:.1%})")
+    print(f"   Validation examples: {len(val_data)} ({actual_val_ratio:.1%})")
     print(f"✅ Saved train split to: {train_file}")
     print(f"✅ Saved test split to: {test_file}")
+    print(f"✅ Saved validation split to: {val_file}")
     print(f"🗑️  Temporary combined file deleted")
     
-    return train_data, test_data
+    return train_data, test_data, val_data
    
 def get_summary(suite):
     summary_list = []
