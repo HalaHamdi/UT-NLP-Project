@@ -511,13 +511,13 @@ class ChecklistTestRunner:
         # Display summary
         print("\n📋 Test Results Summary:")
         suite.summary(n=1)
-        
+
+        summary_df = get_detailed_summary(suite)
         # Get detailed summary
         if save_results:
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
         
-            summary_df = get_detailed_summary(suite)
             display_and_export_mdtable(
                 summary_df, 
                 do_display=True, 
@@ -530,5 +530,5 @@ class ChecklistTestRunner:
             export_suite_to_jsonl(suite, os.path.join(output_folder, "detailed_results.jsonl"))
             print(f"✅ All results saved in folder: {output_folder}")
         
-        return suite
+        return summary_df
     

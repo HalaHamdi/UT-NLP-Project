@@ -1,9 +1,9 @@
-import re
-import pandas as pd
+import os
 import json
-from nltk.tokenize import word_tokenize
 import nltk
-from ques_type import get_q_type, classify_decomposition_type, detect_multi_questions
+import pandas as pd
+from nltk.tokenize import word_tokenize
+from .ques_type import get_q_type, classify_decomposition_type, detect_multi_questions
 nltk.download('punkt')
 
 def normalize(text):
@@ -77,8 +77,12 @@ def save_markdown(summaries, category_names, title, output_file):
         title: main title for the entire section
         output_file: path to the output markdown file (will be appended to by default)
     """
+    
     if len(summaries) != len(category_names):
         raise ValueError("Number of summaries must match number of category names")
+    
+    # Create directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     
     with open(output_file, 'a') as f:
         # Write main title header
@@ -107,6 +111,12 @@ def save_markdown(summaries, category_names, title, output_file):
         f.write("---\n\n")
 
 
+def macro_anallysis(df):
+    df_ratios = df.apply(lambda x: x / x.sum() if x.sum() != 0 else x * 0, axis=1)
+    column_averages = df_ratios.mean()
+    return column_averages.to_dict()
+
+
 def run_analysis(predictions_file, output_file='Adversarial_Test_Suite_Report.md', model_name=None):
     category_funtions = {'question_type': get_q_type,
                     'compositional_type': classify_decomposition_type,
@@ -114,10 +124,14 @@ def run_analysis(predictions_file, output_file='Adversarial_Test_Suite_Report.md
                     None: None}    
 
     summaries=[]
+    macro_analysis_metrics={}
     for category in category_funtions.keys():
             category_function = category_funtions[category]
             summary = load_and_process_predictions(predictions_file, category_function)
+            if category:
+                macro_analysis_metrics[category] = macro_anallysis(summary)
             summaries.append(summary)
 
     title = f"Adversarial Test Suite Analysis{' - ' + model_name if model_name else ''}"
     save_markdown(summaries, list(category_funtions.keys()), title, output_file)
+    return macro_analysis_metrics
