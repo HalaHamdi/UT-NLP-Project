@@ -1,0 +1,106 @@
+{
+    "squad": {
+        "eval_exact_match": 78.2876064333018,
+        "eval_f1": 86.03840918824903,
+        "question_type": {
+            "correct": 0.7023973501072679,
+            "failed": 0.14008713088719435,
+            "partially correct": 0.15751551900553773
+        },
+        "compositional_type": {
+            "correct": 0.7229245445260283,
+            "failed": 0.1353188460545743,
+            "partially correct": 0.1417566094193974
+        },
+        "multihop": {
+            "correct": 0.7452356933500599,
+            "failed": 0.12981250058366356,
+            "partially correct": 0.12495180606627661
+        }
+    },
+    "adversarial": {
+        "eval_exact_match": 18.6,
+        "eval_f1": 28.248855617701032,
+        "question_type": {
+            "correct": 0.15435747574607045,
+            "failed": 0.7238805090439068,
+            "partially correct": 0.1217620152100228
+        },
+        "compositional_type": {
+            "correct": 0.1671133973271736,
+            "failed": 0.7324700079114786,
+            "partially correct": 0.10041659476134783
+        },
+        "multihop": {
+            "correct": 0.17207847116522917,
+            "failed": 0.734753932014206,
+            "partially correct": 0.09316759682056486
+        }
+    },
+    "checklist": {
+        "Comparisons": {
+            "failure_rate": "100.00%",
+            "average_failure": "50.00%"
+        },
+        "Intensifiers": {
+            "failure_rate": "100.00%",
+            "average_failure": "47.74%"
+        },
+        "Properites": {
+            "failure_rate": "99.50%",
+            "average_failure": "51.00%"
+        },
+        "Profession vs nationality": {
+            "failure_rate": "53.00%",
+            "average_failure": "8.60%"
+        },
+        "Animal vs Vehicle": {
+            "failure_rate": "98.00%",
+            "average_failure": "56.38%"
+        },
+        "Animal vs Vehicle v2": {
+            "failure_rate": "56.78%",
+            "average_failure": "16.71%"
+        },
+        "Synonyms": {
+            "failure_rate": "7.78%",
+            "average_failure": "1.94%"
+        },
+        "Antonyms": {
+            "failure_rate": "100.00%",
+            "average_failure": "49.87%"
+        },
+        "Antonyms Comparison": {
+            "failure_rate": "100.00%",
+            "average_failure": "50.06%"
+        },
+        "Change in profession": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Time Difference": {
+            "failure_rate": "100.00%",
+            "average_failure": "54.04%"
+        },
+        "Negation in context, may or may not be in question": {
+            "failure_rate": "97.49%",
+            "average_failure": "24.50%"
+        },
+        "Negation in question only.": {
+            "failure_rate": "100.00%",
+            "average_failure": "50.00%"
+        },
+        "Basic coref, he / she": {
+            "failure_rate": "100.00%",
+            "average_failure": "99.62%"
+        },
+        "Basic coref, his / her": {
+            "failure_rate": "100.00%",
+            "average_failure": "95.00%"
+        },
+        "Former / Latter": {
+            "failure_rate": "100.00%",
+            "average_failure": "100.00%"
+        }
+    }
+}

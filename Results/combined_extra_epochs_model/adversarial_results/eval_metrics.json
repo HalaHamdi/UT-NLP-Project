@@ -1,0 +1,6 @@
+{
+  "eval_loss": 2.506203731536865,
+  "eval_exact_match": 26.8,
+  "eval_f1": 37.4005841447621,
+  "eval_samples": 3000
+}

@@ -1,0 +1,106 @@
+{
+    "squad": {
+        "eval_exact_match": 78.37275307473983,
+        "eval_f1": 85.96223822036696,
+        "question_type": {
+            "correct": 0.7120683203709849,
+            "failed": 0.1443290040745138,
+            "partially correct": 0.1436026755545013
+        },
+        "compositional_type": {
+            "correct": 0.7286580640973045,
+            "failed": 0.13383318578826822,
+            "partially correct": 0.1375087501144274
+        },
+        "multihop": {
+            "correct": 0.7462847869038793,
+            "failed": 0.12777356922383198,
+            "partially correct": 0.12594164387228862
+        }
+    },
+    "adversarial": {
+        "eval_exact_match": 26.8,
+        "eval_f1": 37.4005841447621,
+        "question_type": {
+            "correct": 0.20237751669667453,
+            "failed": 0.6608072243426663,
+            "partially correct": 0.13681525896065927
+        },
+        "compositional_type": {
+            "correct": 0.23720305654732465,
+            "failed": 0.6425045413253784,
+            "partially correct": 0.1202924021272969
+        },
+        "multihop": {
+            "correct": 0.269592423473702,
+            "failed": 0.6221968543886351,
+            "partially correct": 0.10821072213766278
+        }
+    },
+    "checklist": {
+        "Comparisons": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Intensifiers": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Properites": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Profession vs nationality": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Animal vs Vehicle": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Animal vs Vehicle v2": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Synonyms": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Antonyms": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Antonyms Comparison": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Change in profession": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Time Difference": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Negation in context, may or may not be in question": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Negation in question only.": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Basic coref, he / she": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Basic coref, his / her": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        },
+        "Former / Latter": {
+            "failure_rate": "0.00%",
+            "average_failure": "0.00%"
+        }
+    }
+}
