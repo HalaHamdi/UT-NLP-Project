@@ -17,7 +17,7 @@ from Analyse.Checklist.helper import ChecklistTestRunner
 from Analyse.Adversarial.helper import run_analysis
 
 # model_path="./Data/trained_model"
-model_path="../Models/PipelinedChecklistFinetuned"
+model_path="../Models/combined_extra_epochs_model"
 
 checklist_dataset = "../Datasets/checklist_test.jsonl"
 adversarial_dataset = "../Datasets/adversarial_qa_valid.jsonl"
